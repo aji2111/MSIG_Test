@@ -1,0 +1,89 @@
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+
+    environment:
+      POSTGRES_DB: payment_system
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  order-service:
+    build: ./order
+    container_name: order-service
+
+    depends_on:
+      - postgres
+      - rabbitmq
+
+    ports:
+      - "8085:8080"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/payment_system
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: admin
+      SPRING_RABBITMQ_PASSWORD: admin
+
+  payment-service:
+    build: ./payment
+    container_name: payment-service
+
+    depends_on:
+      - postgres
+      - rabbitmq
+      - order-service
+
+    ports:
+      - "8086:8081"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/payment_system
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: admin
+      SPRING_RABBITMQ_PASSWORD: admin
+  
+  notification-service:
+    build: ./notification
+
+    container_name: notification-service
+
+    depends_on:
+    - rabbitmq
+
+    ports:
+      - "8087:8082"
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: admin
+      SPRING_RABBITMQ_PASSWORD: admin
+volumes:
+  postgres_data:

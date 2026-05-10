@@ -1,0 +1,23 @@
+# MAVEN
+target/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# LOG
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ENV
+.env
+
+# APPLICATION SECRET
+application.properties
+
+# DOCKER
+docker-data/
