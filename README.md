@@ -294,6 +294,7 @@ Swagger UI is available for API testing and documentation.
 | -------------------- | ------------------------------------------------------------------------------ |
 | Order Service        | [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) |
 | Payment Service      | [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html) |
+| notification Service | [http://localhost:8082](http://localhost:8082) |
 
 
 ---
